@@ -4,8 +4,8 @@ import { Lead } from "@/types/lead"
 
 export async function POST(req: NextRequest) {
     // Weryfikacja sekretu
-    const secret = req.headers.get(process.env.RESEND_WEBHOOK_SECRET!)
-    if (secret !== process.env.WEBHOOK_SECRET) {
+    const secret = req.headers.get("x-webhook-secret")
+    if (secret !== process.env.RESEND_WEBHOOK_SECRET!) {
         return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
