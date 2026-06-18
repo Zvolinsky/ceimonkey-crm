@@ -6,10 +6,10 @@ import {Caregiver} from "@/types/caregiver";
 
 function interpolate(template: string, data: Caregiver): string {
     return template
-        .replace(/{{first_name}}/g, data.first_name)
-        .replace(/{{last_name}}/g, data.last_name)
+        .replace(/{{nombre}}/g, data.first_name)
+        .replace(/{{apellido}}/g, data.last_name)
         .replace(/{{email}}/g, data.email ?? '')
-        .replace(/{{phone}}/g, data.phone ?? '')
+        .replace(/{{teléfono}}/g, data.phone ?? '')
 }
 
 export async function POST(req: NextRequest) {
@@ -26,12 +26,12 @@ export async function POST(req: NextRequest) {
         // Buduj spersonalizowane maile dla każdego odbiorcy
         const emails = recipients.map((r: any) => ({
             from: process.env.FROM_EMAIL!,
-            to: r.email,
+            to: process.env.CONTACT_EMAIL!, //r.email,
             subject: interpolate(subject, r),
             react: createElement(BulkEmail, {
                 subject: interpolate(subject, r),
                 message: interpolate(message, r),
-                recipientName: r.name,
+                recipientName: `${r.first_name} ${r.last_name}`,
             }),
         }))
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
         // Mapuj wyniki z powrotem na ID rekordów
         const results = recipients.map((r: any, index: number) => {
-            const sent = batchResult.data?.[index]
+            const sent = batchResult.data?.data?.[index]
             return {
                 id: r.id,
                 email: r.email,
