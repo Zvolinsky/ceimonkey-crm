@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { DataTable } from './DataTable'
 import { EmailComposer } from './EmailComposer'
-import { Caregiver } from '../../../types/caregiver'
+import { Caregiver } from '../../../../types/caregiver'
 
 interface Props {
     caregivers: Caregiver[]

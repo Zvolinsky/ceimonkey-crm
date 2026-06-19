@@ -5,7 +5,7 @@ import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Caregiver } from '../../../types/caregiver'
+import { Caregiver } from '../../../../types/caregiver'
 
 export const columns: ColumnDef<Caregiver>[] = [
     // --- Checkbox (multi-select) ---

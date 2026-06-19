@@ -35,7 +35,7 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Mail, ChevronDown, ChevronRight } from 'lucide-react'
 import { columns } from './columns'
-import { Caregiver } from '../../../types/caregiver'
+import { Caregiver } from '../../../../types/caregiver'
 
 function formatGroupValue(columnId: unknown, value: unknown): string {
     if (columnId === 'active') {

@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Mail, CheckCircle, XCircle, Loader2, Eye, Pencil } from 'lucide-react'
-import { Caregiver } from '../../../types/caregiver'
+import { Caregiver } from '../../../../types/caregiver'
 
 function interpolate(template: string, record: Caregiver): string {
     return template
