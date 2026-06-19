@@ -9,33 +9,25 @@ import {
     getExpandedRowModel,
     getFilteredRowModel,
     flexRender,
+    ColumnDef,
     SortingState,
     GroupingState,
     ColumnFiltersState,
     RowSelectionState,
 } from '@tanstack/react-table'
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+    Table, TableBody, TableCell,
+    TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+    Select, SelectContent, SelectItem,
+    SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Mail, ChevronDown, ChevronRight } from 'lucide-react'
-import { columns } from './columns'
-import { Caregiver } from '../../../../types/caregiver'
+import {Checkbox} from "@/components/ui/checkbox";
 
 function formatGroupValue(columnId: unknown, value: unknown): string {
     if (columnId === 'active') {
@@ -49,12 +41,28 @@ function formatGroupValue(columnId: unknown, value: unknown): string {
     return value == null || value === '' ? '(brak)' : String(value)
 }
 
-interface DataTableProps {
-    data: Caregiver[]
-    onSendEmails: (recipients: Caregiver[]) => void
+export interface GroupingOption {
+    value: string
+    label: string
 }
 
-export function DataTable({ data, onSendEmails }: DataTableProps) {
+interface DataTableProps<TData> {
+    data: TData[]
+    columns: ColumnDef<TData, unknown>[]
+    onSendEmails?: (recipients: TData[]) => void
+    groupingOptions?: GroupingOption[]
+    searchPlaceholder?: string
+    sendButtonLabel?: string
+}
+
+export function DataTable<TData>({
+                                     data,
+                                     columns,
+                                     onSendEmails,
+                                     groupingOptions = [],
+                                     searchPlaceholder = 'Buscar...',
+                                     sendButtonLabel = 'Enviar correos',
+                                 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [grouping, setGrouping] = useState<GroupingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -65,13 +73,7 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
         data,
         columns,
         autoResetPageIndex: false,
-        state: {
-            sorting,
-            grouping,
-            columnFilters,
-            globalFilter,
-            rowSelection,
-        },
+        state: { sorting, grouping, columnFilters, globalFilter, rowSelection },
         onSortingChange: setSorting,
         onGroupingChange: setGrouping,
         onColumnFiltersChange: setColumnFilters,
@@ -85,87 +87,81 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
         getFilteredRowModel: getFilteredRowModel(),
     })
 
-    const selectedRecords = table
-        .getSelectedRowModel()
-        .rows.map(row => row.original)
-
-    const selectedCount = selectedRecords.length
+    const selectedRows = table.getSelectedRowModel().rows.map(r => r.original)
+    const selectedCount = selectedRows.length
 
     return (
         <div className="space-y-4">
-            {/* --- Toolbar --- */}
+            {/* Toolbar */}
             <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3 flex-wrap">
-                    {/* Wyszukiwarka globalna */}
                     <Input
-                        placeholder="Buscar por nombre, correo electrónico..."
+                        placeholder={searchPlaceholder}
                         value={globalFilter}
                         onChange={e => setGlobalFilter(e.target.value)}
                         className="w-72"
                     />
+                    {groupingOptions.length > 0 && (
+                        <Select
+                            value={grouping[0] ?? 'none'}
+                            onValueChange={v => setGrouping(v === 'none' ? [] : [v])}
+                        >
+                            <SelectTrigger className="w-48">
+                                <SelectValue placeholder="Agrupar por..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">Sin agrupación</SelectItem>
+                                {groupingOptions.map(opt => (
+                                    <SelectItem key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
 
-                    {/* Grupowanie */}
-                    <Select
-                        value={grouping[0] ?? 'none'}
-                        onValueChange={value =>
-                            setGrouping(value === 'none' ? [] : [value])
-                        }
-                    >
-                        <SelectTrigger className="w-44">
-                            <SelectValue placeholder="Agrupar por..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="none">Sin agrupar</SelectItem>
-                            <SelectItem value="active">Agrupar por estado</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    {/* --- Info o zaznaczeniu --- */}
-                    {selectedCount > 0 ? (
+                    {/* Info zaznaczenia */}
+                    {selectedCount > 0 && (
                         <p className="text-sm text-muted-foreground">
-                            Se ha seleccionado {selectedCount} registro{selectedCount > 1 && 's'}.{' '}
+                            {selectedCount} seleccionado{selectedCount > 1 ? 's' : ''}.{' '}
                             <button
                                 onClick={() => table.resetRowSelection()}
                                 className="underline hover:no-underline"
                             >
-                                Desmarcar
+                                Limpiar selección
                             </button>
                         </p>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">{" "}  </p>
                     )}
                 </div>
-
-                {/* Przycisk wysyłki — aktywny tylko gdy coś zaznaczone */}
-                <Button
-                    onClick={() => onSendEmails(selectedRecords)}
-                    disabled={selectedCount === 0}
-                    className="gap-2"
-                >
-                    <Mail className="h-4 w-4" />
-                    Enviar
-                    {selectedCount > 0 && (
-                        <Badge variant="secondary" className="ml-1">
-                            {selectedCount}
-                        </Badge>
-                    )}
-                </Button>
+                {onSendEmails && (
+                    <Button
+                        onClick={() => onSendEmails(selectedRows)}
+                        disabled={selectedCount === 0}
+                        className="gap-2"
+                    >
+                        <Mail className="h-4 w-4" />
+                        {sendButtonLabel}
+                        {selectedCount > 0 && (
+                            <Badge variant="secondary" className="ml-1">{selectedCount}</Badge>
+                        )}
+                    </Button>
+                )}
             </div>
 
-            {/* --- Tabela --- */}
+
+
+            {/* Tabela */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
-                        {table.getHeaderGroups().map(headerGroup => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map(header => (
+                        {table.getHeaderGroups().map(hg => (
+                            <TableRow key={hg.id}>
+                                {hg.headers.map(header => (
                                     <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
+                                        {header.isPlaceholder ? null : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -174,7 +170,6 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
                     <TableBody>
                         {table.getRowModel().rows.length ? (
                             table.getRowModel().rows.map(row => {
-                                // Wiersz grupujący
                                 if (row.getIsGrouped()) {
                                     const allSelected =
                                         row.subRows.length > 0 &&
@@ -188,23 +183,17 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
                                             : someSelected
                                                 ? 'indeterminate'
                                                 : false
-
                                     return (
                                         <TableRow
                                             key={row.id}
                                             className="bg-muted/50 hover:bg-muted cursor-pointer"
                                             onClick={row.getToggleExpandedHandler()}
                                         >
-                                            <TableCell
-                                                colSpan={columns.length}
-                                                className="font-semibold"
-                                            >
+                                            <TableCell colSpan={columns.length} className="font-semibold">
                                                 <div className="flex items-center gap-2">
-                                                    {row.getIsExpanded() ? (
-                                                        <ChevronDown className="h-4 w-4" />
-                                                    ) : (
-                                                        <ChevronRight className="h-4 w-4" />
-                                                    )}
+                                                    {row.getIsExpanded()
+                                                        ? <ChevronDown className="h-4 w-4" />
+                                                        : <ChevronRight className="h-4 w-4" />}
                                                     <Checkbox
                                                         checked={groupChecked}
                                                         onClick={e => e.stopPropagation()}
@@ -220,27 +209,17 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
                                                         )}`}
                                                     />
                                                     {formatGroupValue(row.groupingColumnId, row.groupingValue)}{' '}
-                                                    <Badge variant="outline">
-                                                        {row.subRows.length}
-                                                    </Badge>
+                                                    <Badge variant="outline">{row.subRows.length}</Badge>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
                                     )
                                 }
-
-                                // Zwykły wiersz
                                 return (
-                                    <TableRow
-                                        key={row.id}
-                                        data-state={row.getIsSelected() && 'selected'}
-                                    >
+                                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                         {row.getVisibleCells().map(cell => (
                                             <TableCell key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -248,10 +227,7 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
                             })
                         ) : (
                             <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center text-muted-foreground"
-                                >
+                                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
                                     No hay registros.
                                 </TableCell>
                             </TableRow>
@@ -260,10 +236,9 @@ export function DataTable({ data, onSendEmails }: DataTableProps) {
                 </Table>
             </div>
 
-            {/* --- Footer z licznikiem --- */}
             <p className="text-sm text-muted-foreground">
-                Un total de {table.getFilteredRowModel().rows.length} registros
-                {globalFilter && ` (filtrowane z ${data.length})`}
+                {table.getFilteredRowModel().rows.length} registro{table.getFilteredRowModel().rows.length !== 1 ? 's' : ''}
+                {globalFilter && ` (filtrado de ${data.length})`}
             </p>
         </div>
     )

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Caregiver } from '../../../../types/caregiver'
 
-export const columns: ColumnDef<Caregiver>[] = [
+export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
     // --- Checkbox (multi-select) ---
     {
         id: 'select',

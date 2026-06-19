@@ -14,7 +14,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Mail, CheckCircle, XCircle, Loader2, Eye, Pencil } from 'lucide-react'
-import { Caregiver } from '../../../../types/caregiver'
+import { Caregiver } from '@/types/caregiver'
+import { Recipient } from '@/types/recipient'
 
 function interpolate(template: string, record: Caregiver): string {
     return template
@@ -28,7 +29,7 @@ type SendStatus = 'idle' | 'sending' | 'done'
 type RecipientStatus = 'pending' | 'sent' | 'error'
 
 interface RecipientResult {
-    record: Caregiver
+    record: Recipient
     status: RecipientStatus
     error?: string
 }
@@ -36,7 +37,7 @@ interface RecipientResult {
 interface Props {
     isOpen: boolean
     onClose: () => void
-    recipients: Caregiver[]
+    recipients: Recipient[]
 }
 
 export function EmailComposer({ isOpen, onClose, recipients }: Props) {
@@ -52,7 +53,7 @@ export function EmailComposer({ isOpen, onClose, recipients }: Props) {
     const previewMessage = previewRecord ? interpolate(message, previewRecord) : message
 
     function handleClose() {
-        if (sendStatus === 'sending') return // nie zamykaj podczas wysyłki
+        if (sendStatus === 'sending') return
         setSendStatus('idle')
         setResults([])
         setSubject('')
