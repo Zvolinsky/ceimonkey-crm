@@ -5,10 +5,9 @@ import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Caregiver } from '../../../../types/caregiver'
+import { Caregiver } from '@/types/caregiver'
 
 export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
-    // --- Checkbox (multi-select) ---
     {
         id: 'select',
         header: ({ table }) => (
@@ -18,21 +17,19 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
                     (table.getIsSomePageRowsSelected() && 'indeterminate')
                 }
                 onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Zaznacz wszystkie"
+                aria-label="Seleccionar todos"
             />
         ),
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={value => row.toggleSelected(!!value)}
-                aria-label="Zaznacz wiersz"
+                aria-label="Seleccionar fila"
             />
         ),
         enableSorting: false,
         enableGrouping: false,
     },
-
-    // --- First name ---
     {
         accessorKey: 'first_name',
         header: ({ column }) => (
@@ -48,8 +45,6 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
             <span className="font-medium">{row.getValue('first_name')}</span>
         ),
     },
-
-    // --- Second name ---
     {
         accessorKey: 'last_name',
         header: ({ column }) => (
@@ -65,8 +60,6 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
             <span className="font-medium">{row.getValue('last_name')}</span>
         ),
     },
-
-    // --- Email ---
     {
         accessorKey: 'email',
         header: ({ column }) => (
@@ -79,16 +72,12 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
             </Button>
         ),
     },
-
-    // --- Phone number ---
     {
         accessorKey: 'phone',
-        header: 'Telefono',
+        header: 'Teléfono',
         cell: ({ row }) => row.getValue('phone') ?? '—',
         enableGrouping: false,
     },
-
-    // --- Status ---
     {
         accessorKey: 'active',
         header: 'Estado',
@@ -101,8 +90,6 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
             )
         },
     },
-
-    // --- Data dodania ---
     {
         accessorKey: 'created_at',
         header: ({ column }) => (
@@ -115,7 +102,7 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
             </Button>
         ),
         cell: ({ row }) =>
-            new Date(row.getValue('created_at')).toLocaleDateString('pl-PL'),
+            new Date(row.getValue('created_at')).toLocaleDateString('es-ES'),
         enableGrouping: false,
     },
 ]

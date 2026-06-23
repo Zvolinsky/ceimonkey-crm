@@ -4,10 +4,9 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import { StateCell } from './StateCell'   // ← nowy import
+import { StateCell } from './StateCell'
 import { Lead } from '@/types/lead'
 
-// Funkcja zamiast stałej — przyjmuje callback dla LeadsWrapper
 export function createLeadColumns(
     onStateChange?: (lead: Lead, newState: string) => void
 ): ColumnDef<Lead, unknown>[] {
@@ -20,14 +19,14 @@ export function createLeadColumns(
                         table.getIsAllPageRowsSelected() ||
                         (table.getIsSomePageRowsSelected() && 'indeterminate')
                     }
-                    onCheckedChange={v => table.toggleAllPageRowsSelected(!!v)}
+                    onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Seleccionar todos"
                 />
             ),
             cell: ({ row }) => (
                 <Checkbox
                     checked={row.getIsSelected()}
-                    onCheckedChange={v => row.toggleSelected(!!v)}
+                    onCheckedChange={value => row.toggleSelected(!!value)}
                     aria-label="Seleccionar fila"
                 />
             ),
@@ -35,44 +34,58 @@ export function createLeadColumns(
             enableGrouping: false,
         },
         {
-            id: 'nombre',
+            accessorKey: 'first_name',
             header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                 >
-                    Nombre <ArrowUpDown className="ml-2 h-4 w-4" />
+                    Nombre
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
-            accessorFn: row => `${row.first_name} ${row.last_name}`,
             cell: ({ row }) => (
-                <span className="font-medium">
-          {row.original.first_name} {row.original.last_name}
-        </span>
+                <span className="font-medium">{row.getValue('first_name')}</span>
+            ),
+        },
+        {
+            accessorKey: 'last_name',
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                >
+                    Apellido
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => (
+                <span className="font-medium">{row.getValue('last_name')}</span>
             ),
         },
         {
             accessorKey: 'email',
-            header: 'Email',
-            cell: ({ row }) =>
-                row.getValue('email') ?? (
-                    <span className="text-muted-foreground">—</span>
-                ),
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+                >
+                    Email
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => row.getValue('email') ?? '—',
             enableGrouping: false,
         },
         {
             accessorKey: 'phone',
             header: 'Teléfono',
-            cell: ({ row }) =>
-                row.getValue('phone') ?? (
-                    <span className="text-muted-foreground">—</span>
-                ),
+            cell: ({ row }) => row.getValue('phone') ?? '—',
             enableGrouping: false,
         },
         {
             accessorKey: 'state',
             header: 'Estado',
-            // StateCell obsługuje i wyświetlanie i edycję
             cell: ({ row }) => (
                 <StateCell
                     lead={row.original}
@@ -95,7 +108,7 @@ export function createLeadColumns(
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                 >
-                    Fecha <ArrowUpDown className="ml-2 h-4 w-4" />
+                    Fecha de creación <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
             cell: ({ row }) =>

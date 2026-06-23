@@ -17,7 +17,7 @@ import { Mail, CheckCircle, XCircle, Loader2, Eye, Pencil } from 'lucide-react'
 import { Caregiver } from '@/types/caregiver'
 import { Recipient } from '@/types/recipient'
 
-function interpolate(template: string, record: Caregiver): string {
+function interpolate(template: string, record: Recipient): string {
     return template
         .replace(/{{nombre}}/g, record.first_name)
         .replace(/{{apellido}}/g, record.last_name)

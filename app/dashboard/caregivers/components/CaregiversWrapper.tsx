@@ -1,21 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { DataTable } from '@/components/dashboard/DataTable'      // ← nowa ścieżka
-import { EmailComposer } from '@/components/dashboard/EmailComposer' // ← nowa ścieżka
-import { caregiverColumns } from './columns'                        // ← importuj kolumny
+import { DataTable } from '@/components/dashboard/DataTable'
+import { EmailComposer } from '@/components/dashboard/EmailComposer'
+import { caregiverColumns } from './columns'
 import { Caregiver } from '@/types/caregiver'
 
 interface Props {
     caregivers: Caregiver[]
 }
 
-export function EmailComposerWrapper({ caregivers }: Props) {
-    const [selectedRecipients, setSelectedRecipients] = useState<Caregiver[]>([])
+export function CaregiversWrapper({ caregivers }: Props) {
+    const [selectedCaregivers, setSelectedCaregivers] = useState<Caregiver[]>([])
     const [isComposerOpen, setIsComposerOpen] = useState(false)
 
     function handleSendEmails(recipients: Caregiver[]) {
-        setSelectedRecipients(recipients)
+        setSelectedCaregivers(recipients)
         setIsComposerOpen(true)
     }
 
@@ -23,7 +23,7 @@ export function EmailComposerWrapper({ caregivers }: Props) {
         <>
             <DataTable
                 data={caregivers}
-                columns={caregiverColumns}                        // ← teraz jako prop
+                columns={caregiverColumns}
                 onSendEmails={handleSendEmails}
                 groupingOptions={[
                     { value: 'active', label: 'Agrupar por estado' },
@@ -33,7 +33,7 @@ export function EmailComposerWrapper({ caregivers }: Props) {
             <EmailComposer
                 isOpen={isComposerOpen}
                 onClose={() => setIsComposerOpen(false)}
-                recipients={selectedRecipients}
+                recipients={selectedCaregivers}
             />
         </>
     )

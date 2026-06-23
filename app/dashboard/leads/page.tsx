@@ -8,7 +8,6 @@ export default async function LeadsPage() {
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false })
-
     if (error) {
         return (
             <div className="p-8 text-red-500">
@@ -16,10 +15,11 @@ export default async function LeadsPage() {
             </div>
         )
     }
-
     return (
         <div className="p-8 space-y-6">
-            <h1 className="text-2xl font-bold">Leads</h1>
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold">Leads</h1>
+            </div>
             <LeadsWrapper leads={leads ?? []} />
         </div>
     )
