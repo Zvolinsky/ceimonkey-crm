@@ -96,10 +96,7 @@ export function createLeadColumns(
         {
             accessorKey: 'source',
             header: 'Fuente',
-            cell: ({ row }) =>
-                row.getValue('source') ?? (
-                    <span className="text-muted-foreground">—</span>
-                ),
+            cell: ({ row }) => row.getValue('source') ?? '—',
         },
         {
             accessorKey: 'created_at',
