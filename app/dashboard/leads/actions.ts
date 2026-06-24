@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
+
 export async function updateLeadState(id: number, state: string) {
     const supabase = await createClient()
 
@@ -25,6 +26,9 @@ export async function convertLeadToCaregiver(
         phone: string | null
     }
 ) {
+    //TODO: zrobić obsługę błędów
+    //TODO: naprawić NULL telefon
+    //TODO: zrobić formatowanie telefonu
     const supabase = await createClient()
 
     const { data: existing } = await supabase

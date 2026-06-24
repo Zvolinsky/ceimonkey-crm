@@ -3,20 +3,26 @@
 import { useState, useMemo, useCallback } from 'react'
 import { DataTable } from '@/components/dashboard/DataTable'
 import { EmailComposer } from '@/components/dashboard/EmailComposer'
-
+import {KanbanView} from "@/app/dashboard/leads/components/KanbanView";
 import { createLeadColumns } from './columns'
 import { Lead } from '@/types/lead'
 import {useEmailComposer} from "@/hooks/useEmailComposer";
 import {ConversionModal} from "@/app/dashboard/leads/components/ConversionModal";
+import {Button} from "@/components/ui/button";
+import {LayoutGrid, List} from "lucide-react";
+
+type ViewMode = 'table' | 'kanban'
 
 interface Props {
     leads: Lead[]
 }
 
 export function LeadsWrapper({ leads }: Props) {
-    const { selectedRecipients, isComposerOpen, openComposer, closeComposer } = useEmailComposer();
-
+    const [viewMode, setViewMode] = useState<ViewMode>('table')
     const [leadToConvert, setLeadToConvert] = useState<Lead | null>(null)
+
+    const { selectedRecipients, isComposerOpen, openComposer, closeComposer } = useEmailComposer<Lead>();
+
 
     const handleStateChange = useCallback((lead: Lead, newState: string) => {
         if (newState === 'Matriculado') {
@@ -31,17 +37,43 @@ export function LeadsWrapper({ leads }: Props) {
 
     return (
         <>
-            <DataTable
-                data={leads}
-                columns={columns}
-                onSendEmails={openComposer}
-                groupingOptions={[
-                    { value: 'state', label: 'Agrupar por estado' },
-                    { value: 'source', label: 'Agrupar por fuente' },
-                ]}
-                searchPlaceholder="Buscar por nombre, email, teléfono..."
-                sendButtonLabel="Enviar correos"
-            />
+            <div className="flex items-center gap-1 self-end">
+                <Button
+                    variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('table')}
+                    aria-label="Vista de tabla"
+                >
+                    <List className="h-4 w-4" />
+                </Button>
+                <Button
+                    variant={viewMode === 'kanban' ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('kanban')}
+                    aria-label="Vista kanban"
+                >
+                    <LayoutGrid className="h-4 w-4" />
+                </Button>
+            </div>
+
+            {viewMode === 'table' ? (
+                <DataTable
+                    data={leads}
+                    columns={columns}
+                    onSendEmails={openComposer}
+                    groupingOptions={[
+                        { value: 'state', label: 'Agrupar por estado' },
+                        { value: 'source', label: 'Agrupar por fuente' },
+                    ]}
+                    searchPlaceholder="Buscar por nombre, email, teléfono..."
+                    sendButtonLabel="Enviar correos"
+                />
+            ) : (
+                <KanbanView
+                    leads={leads}
+                    onMatriculado={setLeadToConvert}
+                />
+            )}
             <EmailComposer
                 isOpen={isComposerOpen}
                 onClose={closeComposer}

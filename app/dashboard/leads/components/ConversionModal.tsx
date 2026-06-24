@@ -174,6 +174,7 @@ export function ConversionModal({ lead, onClose }: Props) {
                             {isPending
                                 ? <><Loader2 className="h-4 w-4 animate-spin" /> Creando...</>
                                 : <><UserPlus className="h-4 w-4" /> Crear cuidador/a</>
+                                //TODO: cuidador -> familia
                             }
                         </Button>
                     </DialogFooter>
