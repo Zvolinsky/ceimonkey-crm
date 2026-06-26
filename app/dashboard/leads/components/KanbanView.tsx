@@ -16,14 +16,8 @@ import { KanbanColumn } from './KanbanColumn'
 import { KanbanCard } from './KanbanCard'
 import { Lead } from '@/types/lead'
 import { updateLeadState } from '../actions'
+import {LEAD_STATES} from "@/constants/options";
 
-export const KANBAN_STATES = [
-    'Nueva consulta',
-    'Contactado',
-    'Visita programada',
-    'Matriculado',
-    'Descartado',
-] as const
 
 interface Props {
     leads: Lead[]
@@ -68,7 +62,7 @@ export function KanbanView({ leads, onMatriculado }: Props) {
         const prevState = lead.state
 
         setLocalLeads(prev =>
-            prev.map(l => l.id === leadId ? { ...l, state: newState } : l)
+            prev.map(l => l.id === leadId ? { ...l, state: newState } as Lead : l)
         )
 
         try {
@@ -86,7 +80,7 @@ export function KanbanView({ leads, onMatriculado }: Props) {
         }
     }
 
-    const leadsByState = KANBAN_STATES.reduce((acc, state) => {
+    const leadsByState = LEAD_STATES.reduce((acc, state) => {
         acc[state] = localLeads.filter(l => l.state === state)
         return acc
     }, {} as Record<string, Lead[]>)
@@ -98,7 +92,7 @@ export function KanbanView({ leads, onMatriculado }: Props) {
             onDragEnd={handleDragEnd}
         >
             <div className="flex gap-4 overflow-x-auto pb-4 pt-1">
-                {KANBAN_STATES.map(state => (
+                {LEAD_STATES.map(state => (
                     <KanbanColumn
                         key={state}
                         state={state}

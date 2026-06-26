@@ -10,6 +10,8 @@ import {useEmailComposer} from "@/hooks/useEmailComposer";
 import {ConversionModal} from "@/app/dashboard/leads/components/ConversionModal";
 import {Button} from "@/components/ui/button";
 import {LayoutGrid, List} from "lucide-react";
+import { CreateLeadModal } from './CreateLeadModal'
+import { Plus } from 'lucide-react'
 
 type ViewMode = 'table' | 'kanban'
 
@@ -20,7 +22,7 @@ interface Props {
 export function LeadsWrapper({ leads }: Props) {
     const [viewMode, setViewMode] = useState<ViewMode>('table')
     const [leadToConvert, setLeadToConvert] = useState<Lead | null>(null)
-
+    const [isCreateOpen, setIsCreateOpen] = useState(false)
     const { selectedRecipients, isComposerOpen, openComposer, closeComposer } = useEmailComposer<Lead>();
 
 
@@ -37,23 +39,34 @@ export function LeadsWrapper({ leads }: Props) {
 
     return (
         <>
-            <div className="flex items-center gap-1 self-end">
+            <div className="flex items-center justify-between">
                 <Button
-                    variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                    onClick={() => setIsCreateOpen(true)}
                     size="sm"
-                    onClick={() => setViewMode('table')}
-                    aria-label="Vista de tabla"
+                    className="gap-2"
                 >
-                    <List className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
+                    Nuevo lead
                 </Button>
-                <Button
-                    variant={viewMode === 'kanban' ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('kanban')}
-                    aria-label="Vista kanban"
-                >
-                    <LayoutGrid className="h-4 w-4" />
-                </Button>
+
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('table')}
+                        aria-label="Vista de tabla"
+                    >
+                        <List className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant={viewMode === 'kanban' ? 'secondary' : 'ghost'}
+                        size="sm"
+                        onClick={() => setViewMode('kanban')}
+                        aria-label="Vista kanban"
+                    >
+                        <LayoutGrid className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
 
             {viewMode === 'table' ? (
@@ -82,6 +95,10 @@ export function LeadsWrapper({ leads }: Props) {
             <ConversionModal
                 lead={leadToConvert}
                 onClose={() => setLeadToConvert(null)}
+            />
+            <CreateLeadModal
+                isOpen={isCreateOpen}
+                onClose={() => setIsCreateOpen(false)}
             />
         </>
     )

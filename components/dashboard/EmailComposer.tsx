@@ -14,16 +14,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Mail, CheckCircle, XCircle, Loader2, Eye, Pencil } from 'lucide-react'
-import { Caregiver } from '@/types/caregiver'
+import { interpolate } from "@/lib/email";
 import { Recipient } from '@/types/recipient'
-
-function interpolate(template: string, record: Recipient): string {
-    return template
-        .replace(/{{nombre}}/g, record.first_name)
-        .replace(/{{apellido}}/g, record.last_name)
-        .replace(/{{email}}/g, record.email ?? '')
-        .replace(/{{teléfono}}/g, record.phone ?? '')
-}
 
 type SendStatus = 'idle' | 'sending' | 'done'
 type RecipientStatus = 'pending' | 'sent' | 'error'
@@ -95,7 +87,7 @@ export function EmailComposer({ isOpen, onClose, recipients }: Props) {
 
             setResults(
                 recipients.map(r => {
-                    const result = data.results?.find((res: any) => res.id === r.id)
+                    const result = data.results?.find((res: Recipient) => res.id === r.id)
                     return {
                         record: r,
                         status: result?.success ? 'sent' : 'error',
@@ -305,3 +297,5 @@ export function EmailComposer({ isOpen, onClose, recipients }: Props) {
         </Dialog>
     )
 }
+// TODO: zrobić tak, żeby zmienne wstawiały się tak gdzie zaznaczenie
+//TODO: zmienne w temacie wiadomosci

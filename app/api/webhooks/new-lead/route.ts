@@ -3,14 +3,14 @@ import { resend } from "@/lib/resend"
 import { Lead } from "@/types/lead"
 
 export async function POST(req: NextRequest) {
-    // Weryfikacja sekretu
+
     const secret = req.headers.get("x-webhook-secret")
     if (secret !== process.env.RESEND_WEBHOOK_SECRET!) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 })
+        return Response.json({ error: "No autorizado" }, { status: 401 })
     }
 
     const body = await req.json()
-    const lead: Lead = body.record // Supabase wysyła nowy rekord w polu "record"
+    const lead: Lead = body.record
 
     try {
         await resend.emails.send({
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
         return Response.json({ ok: true })
     } catch (err) {
-        console.error("Błąd wysyłki powiadomienia o leadzie:", err)
-        return Response.json({ error: "Błąd wysyłki" }, { status: 500 })
+        console.error("Error al enviar la notificación sobre un cliente potencial:", err)
+        return Response.json({ error: "Error de envío" }, { status: 500 })
     }
 }

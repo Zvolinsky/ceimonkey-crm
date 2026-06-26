@@ -17,7 +17,7 @@ interface Props {
 
 export function BulkEmail({ subject, message, recipientName }: Props) {
     return (
-        <Html lang="pl">
+        <Html lang="es">
             <Head />
             <Preview>{subject}</Preview>
             <Tailwind>
@@ -28,7 +28,7 @@ export function BulkEmail({ subject, message, recipientName }: Props) {
                         </Text>
                         <Hr className="my-6 border-gray-200" />
                         <Text className="text-xs text-gray-400">
-                            Ta wiadomość została wysłana do: {recipientName}
+                            Este mensaje se ha enviado a: {recipientName}
                         </Text>
                     </Container>
                 </Body>

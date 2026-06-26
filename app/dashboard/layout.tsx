@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 const tabs = [
-    { href: '/dashboard/caregivers', label: 'Familias' },
+    { href: '/dashboard/caregivers', label: 'Cuidadores' },
     { href: '/dashboard/leads', label: 'Leads' },
 ]
 

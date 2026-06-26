@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import {useMemo, useState} from 'react'
 import {
     useReactTable,
     getCoreRowModel,
@@ -30,15 +30,7 @@ import { Mail, ChevronDown, ChevronRight } from 'lucide-react'
 import {Checkbox} from "@/components/ui/checkbox";
 
 function formatGroupValue(columnId: unknown, value: unknown): string {
-    if (columnId === 'active') {
-        const isActive =
-            value === true ||
-            value === 'true' ||
-            value === 1 ||
-            value === '1'
-        return isActive ? 'Matriculadas' : 'No matriculadas'
-    }
-    return value == null || value === '' ? '(brak)' : String(value)
+    return value == null || value === 'null' || value === '' ? '(sin datos)' : String(value)
 }
 
 export interface GroupingOption {
@@ -53,6 +45,7 @@ interface DataTableProps<TData> {
     groupingOptions?: GroupingOption[]
     searchPlaceholder?: string
     sendButtonLabel?: string
+    arrayGroupingKeys?: string[]
 }
 
 export function DataTable<TData>({
@@ -62,6 +55,7 @@ export function DataTable<TData>({
                                      groupingOptions = [],
                                      searchPlaceholder = 'Buscar...',
                                      sendButtonLabel = 'Enviar correos',
+                                     arrayGroupingKeys = []
                                  }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [grouping, setGrouping] = useState<GroupingState>([])
@@ -69,8 +63,33 @@ export function DataTable<TData>({
     const [globalFilter, setGlobalFilter] = useState('')
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
+    const processedData = useMemo(() => {
+        if (
+            grouping.length === 0 ||
+            !arrayGroupingKeys.includes(grouping[0])
+        ) {
+            return data
+        }
+
+        const key = grouping[0] as keyof TData
+        const expanded: TData[] = []
+
+        for (const row of data) {
+            const value = row[key]
+            if (Array.isArray(value) && value.length > 0) {
+                for (const item of value) {
+                    expanded.push({ ...row, [key]: item })
+                }
+            } else {
+                expanded.push({ ...row, [key]: null })
+            }
+        }
+
+        return expanded
+    }, [data, grouping, arrayGroupingKeys])
+
     const table = useReactTable({
-        data,
+        data: processedData as TData[],
         columns,
         autoResetPageIndex: false,
         state: { sorting, grouping, columnFilters, globalFilter, rowSelection },

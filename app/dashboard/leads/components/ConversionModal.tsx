@@ -86,7 +86,7 @@ export function ConversionModal({ lead, onClose }: Props) {
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <UserPlus className="h-5 w-5" />
-                        Convertir lead en familia
+                        Convertir lead en cuidador/a
                     </DialogTitle>
                     <DialogDescription asChild>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -95,7 +95,7 @@ export function ConversionModal({ lead, onClose }: Props) {
                             </Badge>
                             <ArrowRight className="h-3.5 w-3.5" />
                             <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                                Familia
+                                Cuidador/a
                             </Badge>
                         </div>
                     </DialogDescription>
@@ -125,7 +125,7 @@ export function ConversionModal({ lead, onClose }: Props) {
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="conv-last-name">Apellido</Label>
+                            <Label htmlFor="conv-last-name">Apellidos</Label>
                             <Input
                                 id="conv-last-name"
                                 {...register('last_name')}
@@ -174,7 +174,6 @@ export function ConversionModal({ lead, onClose }: Props) {
                             {isPending
                                 ? <><Loader2 className="h-4 w-4 animate-spin" /> Creando...</>
                                 : <><UserPlus className="h-4 w-4" /> Crear cuidador/a</>
-                                //TODO: cuidador -> familia
                             }
                         </Button>
                     </DialogFooter>

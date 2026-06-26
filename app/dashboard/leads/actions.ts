@@ -2,7 +2,14 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import {CreateLead} from "@/types/lead";
 
+export async function createLead(data: CreateLead) {
+    const supabase = await createClient()
+    const { error } = await supabase.from('leads').insert(data)
+    if (error) throw new Error(error.message)
+    revalidatePath('/dashboard/leads')
+}
 
 export async function updateLeadState(id: number, state: string) {
     const supabase = await createClient()
@@ -22,7 +29,7 @@ export async function convertLeadToCaregiver(
     data: {
         first_name: string
         last_name: string
-        email: string
+        email: string | null
         phone: string | null
     }
 ) {
@@ -48,7 +55,7 @@ export async function convertLeadToCaregiver(
         .insert({
             first_name: data.first_name,
             last_name: data.last_name,
-            email: data.email,
+            email: data.email ?? null,
             phone: data.phone ?? null,
             active: true,
         })

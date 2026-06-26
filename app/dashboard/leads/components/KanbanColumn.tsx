@@ -3,12 +3,12 @@
 import { useDroppable } from '@dnd-kit/core'
 import { Badge } from '@/components/ui/badge'
 import { KanbanCard } from './KanbanCard'
-import { STATE_STYLES} from "@/app/dashboard/leads/components/StateCell";
+import { LEAD_STATE_STYLES} from "@/constants/styles";
 import { Lead } from '@/types/lead'
 import { cn } from '@/lib/utils'
 
 interface Props {
-    state: string
+    state: 'Nueva consulta' | 'Contactado' | 'Visita programada' | 'Matriculado' | 'Descartado',
     leads: Lead[]
 }
 
@@ -18,7 +18,7 @@ export function KanbanColumn({ state, leads }: Props) {
     return (
         <div className="flex flex-col min-w-[240px] w-[240px]">
             <div className="flex items-center justify-between mb-3 px-1">
-                <Badge className={STATE_STYLES[state] ?? ''}>{state}</Badge>
+                <Badge className={LEAD_STATE_STYLES[state] ?? ''}>{state}</Badge>
                 <span className="text-xs font-medium text-muted-foreground tabular-nums">
           {leads.length}
         </span>
