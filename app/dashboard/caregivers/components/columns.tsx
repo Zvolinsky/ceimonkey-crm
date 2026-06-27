@@ -1,85 +1,14 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Caregiver } from '@/types/caregiver'
 import { SERVICES_STYLES, AGE_GROUPS_STYLES} from "@/constants/styles";
+import {createCreatedAtColumn, createPersonalDataColumns, createSelectColumn} from "@/lib/table-helpers";
 
 export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
-    {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Seleccionar todos"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={value => row.toggleSelected(!!value)}
-                aria-label="Seleccionar fila"
-            />
-        ),
-        enableSorting: false,
-        enableGrouping: false,
-    },
-    {
-        accessorKey: 'first_name',
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-                Nombre
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => (
-            <span className="font-medium">{row.getValue('first_name')}</span>
-        ),
-    },
-    {
-        accessorKey: 'last_name',
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-                Apellido
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => (
-            <span className="font-medium">{row.getValue('last_name')}</span>
-        ),
-    },
-    {
-        accessorKey: 'email',
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-                Email
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) => row.getValue('email') ?? '—',
-    },
-    {
-        accessorKey: 'phone',
-        header: 'Teléfono',
-        cell: ({ row }) => row.getValue('phone') ?? '—',
-        enableGrouping: false,
-    },
+        createSelectColumn(),
+    ...createPersonalDataColumns() as ColumnDef<Caregiver, unknown>[],
     {
         accessorKey: 'registration_status',
         header: 'Estado matrícula',
@@ -156,19 +85,5 @@ export const caregiverColumns: ColumnDef<Caregiver, unknown>[] = [
         enableGrouping: false,
         enableSorting: false,
     },
-    {
-        accessorKey: 'created_at',
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
-                Fecha de creación
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-        cell: ({ row }) =>
-            new Date(row.getValue('created_at')).toLocaleDateString('es-ES'),
-        enableGrouping: false,
-    },
+    createCreatedAtColumn()
 ]
