@@ -23,7 +23,7 @@ export function LeadsWrapper({ leads }: Props) {
     const [viewMode, setViewMode] = useState<ViewMode>('table')
     const [leadToConvert, setLeadToConvert] = useState<Lead | null>(null)
     const [isCreateOpen, setIsCreateOpen] = useState(false)
-    const { selectedRecipients, isComposerOpen, openComposer, closeComposer } = useEmailComposer<Lead>();
+    const { selectedRecipients, isComposerOpen, openComposer, closeComposer, copyEmails } = useEmailComposer<Lead>();
 
 
     const handleStateChange = useCallback((lead: Lead, newState: string) => {
@@ -74,6 +74,7 @@ export function LeadsWrapper({ leads }: Props) {
                     data={leads}
                     columns={columns}
                     onSendEmails={openComposer}
+                    onCopyEmails={copyEmails}
                     groupingOptions={[
                         { value: 'state', label: 'Agrupar por estado' },
                         { value: 'source', label: 'Agrupar por fuente' },

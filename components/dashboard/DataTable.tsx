@@ -26,7 +26,7 @@ import {
     SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Mail, ChevronDown, ChevronRight } from 'lucide-react'
+import { Mail, ChevronDown, ChevronRight, Copy, Check } from 'lucide-react'
 import {Checkbox} from "@/components/ui/checkbox";
 
 function formatGroupValue(columnId: unknown, value: unknown): string {
@@ -42,6 +42,7 @@ interface DataTableProps<TData> {
     data: TData[]
     columns: ColumnDef<TData, unknown>[]
     onSendEmails?: (recipients: TData[]) => void
+    onCopyEmails?: (recipients: TData[]) => void
     groupingOptions?: GroupingOption[]
     searchPlaceholder?: string
     sendButtonLabel?: string
@@ -52,6 +53,7 @@ export function DataTable<TData>({
                                      data,
                                      columns,
                                      onSendEmails,
+                                     onCopyEmails,
                                      groupingOptions = [],
                                      searchPlaceholder = 'Buscar...',
                                      sendButtonLabel = 'Enviar correos',
@@ -62,6 +64,7 @@ export function DataTable<TData>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+    const [copied, setCopied] = useState(false)
 
     const processedData = useMemo(() => {
         if (
@@ -109,6 +112,13 @@ export function DataTable<TData>({
     const selectedRows = table.getSelectedRowModel().rows.map(r => r.original)
     const selectedCount = selectedRows.length
 
+    function handleCopy() {
+        if (!onCopyEmails) return
+        onCopyEmails(selectedRows)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
     return (
         <div className="space-y-4">
             {/* Toolbar */}
@@ -152,19 +162,37 @@ export function DataTable<TData>({
                         </p>
                     )}
                 </div>
-                {onSendEmails && (
-                    <Button
-                        onClick={() => onSendEmails(selectedRows)}
-                        disabled={selectedCount === 0}
-                        className="gap-2"
-                    >
-                        <Mail className="h-4 w-4" />
-                        {sendButtonLabel}
-                        {selectedCount > 0 && (
-                            <Badge variant="secondary" className="ml-1">{selectedCount}</Badge>
-                        )}
-                    </Button>
-                )}
+                <div className="flex items-center gap-2">
+                    {onCopyEmails && (
+                        <Button
+                            variant="outline"
+                            onClick={handleCopy}
+                            disabled={selectedCount === 0}
+                            className="gap-2"
+                        >
+                            {copied
+                                ? <><Check className="h-4 w-4 text-green-500" /> Copiado</>
+                                : <><Copy className="h-4 w-4" /> Copiar emails</>
+                            }
+                            {selectedCount > 0 && !copied && (
+                                <Badge variant="secondary">{selectedCount}</Badge>
+                            )}
+                        </Button>
+                    )}
+                    {onSendEmails && (
+                        <Button
+                            onClick={() => onSendEmails(selectedRows)}
+                            disabled={selectedCount === 0}
+                            className="gap-2"
+                        >
+                            <Mail className="h-4 w-4" />
+                            {sendButtonLabel}
+                            {selectedCount > 0 && (
+                                <Badge variant="secondary">{selectedCount}</Badge>
+                            )}
+                        </Button>
+                    )}
+                </div>
             </div>
 
 

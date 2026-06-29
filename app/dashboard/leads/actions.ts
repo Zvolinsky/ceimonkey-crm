@@ -70,7 +70,6 @@ export async function convertLeadToCaregiver(
         .eq('id', leadId)
 
     if (updateError) throw new Error(updateError.message)
-
     revalidatePath('/dashboard/leads')
     revalidatePath('/dashboard/caregivers')
 }

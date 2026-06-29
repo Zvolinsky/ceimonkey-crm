@@ -19,7 +19,7 @@ const groupingOptions = [
 export function CaregiversWrapper({ caregivers }: { caregivers: Caregiver[]}) {
     const [isCreateOpen, setIsCreateOpen] = useState(false)
 
-    const { selectedRecipients, isComposerOpen, openComposer, closeComposer } = useEmailComposer();
+    const { selectedRecipients, isComposerOpen, openComposer, closeComposer, copyEmails } = useEmailComposer();
 
     return (
         <>
@@ -37,6 +37,7 @@ export function CaregiversWrapper({ caregivers }: { caregivers: Caregiver[]}) {
                 data={caregivers}
                 columns={caregiverColumns}
                 onSendEmails={openComposer}
+                onCopyEmails={copyEmails}
                 arrayGroupingKeys={['services', 'age_groups']}
                 groupingOptions={groupingOptions}
                 searchPlaceholder="Buscar por nombre, email..."
