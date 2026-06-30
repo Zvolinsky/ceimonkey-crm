@@ -57,7 +57,7 @@ export async function convertLeadToCaregiver(
             last_name: data.last_name,
             email: data.email ?? null,
             phone: data.phone ?? null,
-            active: true,
+            registration_status: 'Matriculada',
         })
         .select('id')
         .single()
